@@ -36,6 +36,23 @@ var Entity = function(){
     return self;
 }
 
+var Wall = function (id) {
+    var self = {
+        x:150,
+        y:150,
+        width:50,
+        height:50
+    }
+    return self;
+}
+
+var Img = {};
+Img.player = new Image();
+Img.player.src = '/client/img/player.png';
+
+Img.playerInj = new Image();
+Img.playerInj.src = '/client/img/player_inj.png';
+
 var Player = function(id){
     var self = Entity();
     self.id = id;
@@ -109,6 +126,8 @@ var Player = function(id){
     return self;
 }
 Player.list = {};
+
+
 Player.onConnect = function(socket){
     var player = Player(socket.id);
     socket.on('keyPress',function(data){
@@ -258,6 +277,8 @@ var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket){
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
+
+    var wall = Wall(socket.id);
 
     socket.on('signIn',function(data){
         isValidPassword(data,function(res){
