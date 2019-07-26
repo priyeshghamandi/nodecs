@@ -8,6 +8,7 @@ var SNOW_IMAGE_X = 200;
 var SNOW_IMAGE_Y = 30;
 var SNOW_IMAGE_WIDTH = 1000;
 var SNOW_IMAGE_HEIGHT = 600;
+var SIZE_200 = 200;
 
 var LEFT_KEY = 37;
 var RIGHT_KEY = 39;

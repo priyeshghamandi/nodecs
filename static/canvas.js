@@ -5,18 +5,18 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 window.onload = function() {
-	//setGameStartCounterText = function(counter) {
-			drawGameBoard();
-		//}
+	setGameStartCounterText = function(counter) {
+			drawGameBoard(counter);
+		}
 };
 
-let drawGameBoard = function() {
+let drawGameBoard = function(counter) {
 	var snowImage = new Image();
   snowImage.onload = function() {
        context.drawImage(snowImage, SNOW_IMAGE_X, SNOW_IMAGE_Y, SNOW_IMAGE_WIDTH, SNOW_IMAGE_HEIGHT);
-       //context.font = "40pt Calibri";
-			//context.fillStyle = "red";
-			//context.fillText(getGameStartText(counter), 460, 100);
+       context.font = "40pt Calibri";
+			context.fillStyle = "red";
+			context.fillText(getGameStartText(counter), 460, 100);
 			drawWalls();
 
 			let team1 = new Team1();
@@ -205,12 +205,10 @@ setInterval(function() {
     socket.emit('movement', movement);
 }, 1000 / 60);
 
-//context.clearRect(0, 0, 800, 600);
 
 socket.on('state', function(players) {
-		context.clearRect(0, 0, 1200, 600);
-
-    context.fillStyle = 'green';
+    //context.clearRect(0, 0, canvas.width, canvas.height);
+    //context.fillStyle = 'green';
     for (var id in players) {
         var player = players[id];
         context.beginPath();

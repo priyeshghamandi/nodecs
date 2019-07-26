@@ -15,6 +15,14 @@ app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname, '/static/index.html'));
 });
 
+app.get('/first', function(request, response) {
+    response.sendFile(path.join(__dirname, '/static/first.html'));
+});
+
+app.get('/second', function(request, response) {
+    response.sendFile(path.join(__dirname, '/static/second.html'));
+});
+
 // Starts the server.
 server.listen(5000, function() {
     console.log('Starting server on port 5000');
