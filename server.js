@@ -25,35 +25,15 @@ io.on('connection', function(socket) {
     console.log('Socket connection established');
 });
 
-/*setInterval(function() {
-    io.sockets.emit('message', 'hi!');
-}, 1000);*/
 
 
-var players = {};
+
 io.on('connection', function(socket) {
-    socket.on('new player', function() {
-        players[socket.id] = {
-            x: 0,
-            y: 300
-        };
-    });
-    socket.on('movement', function(data) {
-        var player = players[socket.id] || {};
-        if (data.left) {
-             player.x -= 5;
-        }
-        if (data.up) {
-            player.y -= 5;
-        }
-        if (data.right) {
-            player.x += 5;
-        }
-        if (data.down) {
-            player.y += 5;
-        }
-    });
+    io.sockets.emit('new player');
+
+
+    /**/
 });
-setInterval(function() {
-    io.sockets.emit('state', players);
-}, 1000 / 60);
+
+
+

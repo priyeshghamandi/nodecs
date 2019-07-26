@@ -1,5 +1,4 @@
-//var mongojs = require("mongojs");
-//var db = mongojs('localhost:27017/myGame', ['account','progress']);
+
 
 var express = require('express');
 var app = express();
@@ -45,13 +44,12 @@ var Wall = function (id) {
     }
     return self;
 }
+/*
+var playerImg = new Image();
+playerImg.src = '/client/img/player.png';
 
-var Img = {};
-Img.player = new Image();
-Img.player.src = '/client/img/player.png';
-
-Img.playerInj = new Image();
-Img.playerInj.src = '/client/img/player_inj.png';
+var playerImgInj = new Image();
+playerImgInj.src = '/client/img/player_inj.png';*/
 
 var Player = function(id){
     var self = Entity();
@@ -67,9 +65,14 @@ var Player = function(id){
     self.hp = 10;
     self.hpMax = 10;
     self.score = 0;
+    self.img = '/client/img/player.png';
+
+    //self.imgInj = '/client/img/player_inj.png';
 
     var super_update = self.update;
     self.update = function(){
+        console.log("updating player "+self.hp);
+        console.log("updating player imng"+self.img);
         self.updateSpd();
         super_update();
 
@@ -108,6 +111,7 @@ var Player = function(id){
             hp:self.hp,
             hpMax:self.hpMax,
             score:self.score,
+            img:self.img,
         };
     }
     self.getUpdatePack = function(){
@@ -117,6 +121,7 @@ var Player = function(id){
             y:self.y,
             hp:self.hp,
             score:self.score,
+            img:self.img,
         }
     }
 
@@ -190,14 +195,21 @@ var Bullet = function(parent,angle){
             var p = Player.list[i];
             if(self.getDistance(p) < 32 && self.parent !== p.id){
                 p.hp -= 1;
+                console.log(" changing HP ",p.hp);
+
+                p.img = '/client/img/player_inj.png';
+                console.log(" changing image ",p.img);
 
                 if(p.hp <= 0){
                     var shooter = Player.list[self.parent];
                     if(shooter)
                         shooter.score += 1;
-                    p.hp = p.hpMax;
-                    p.x = Math.random() * 500;
-                    p.y = Math.random() * 500;
+
+                    //p.hp = p.hpMax;
+                    //p.x = Math.random() * 500;
+                    //p.y = Math.random() * 500;
+
+                   // p.remove();
                 }
                 self.toRemove = true;
             }

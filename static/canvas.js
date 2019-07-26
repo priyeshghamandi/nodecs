@@ -64,9 +64,7 @@ function getGameStartText(counter) {
 	return text;
 }
 
-var interval = setInterval(function() {
-	setGameStartCounterText(GAME_START_COUNTER--);
-}, 1000);
+
 
 function Team1() {
 	let p1 = new Player(300, 250, 2, 5, 20, 1, 1);
@@ -181,6 +179,24 @@ document.addEventListener('keydown', function(event) {
             movement.down = true;
             break;
     }
+    console.log("movement "+movement.right);
+   // socket.emit('movement', movement);
+    console.log("MOVE PLAYER");
+
+    var player = players[socket.id] || {};
+    if (movement.left) {
+        player.x -= 5;
+    }
+    if (movement.up) {
+        player.y -= 5;
+    }
+    if (movement.right) {
+        console.log("movement right");
+        player.x += 5;
+    }
+    if (movement.down) {
+        player.y += 5;
+    }
 });
 document.addEventListener('keyup', function(event) {
     switch (event.keyCode) {
@@ -199,17 +215,13 @@ document.addEventListener('keyup', function(event) {
     }
 });
 
-
-socket.emit('new player');
-setInterval(function() {
-    socket.emit('movement', movement);
-}, 1000 / 60);
-
-//context.clearRect(0, 0, 800, 600);
-
-socket.on('state', function(players) {
-		context.clearRect(0, 0, 1200, 600);
-
+var players = {};
+socket.on('new player', function() {
+	console.log("NEW PLAYER");
+    players[socket.id] = {
+        x: 0,
+        y: 300
+    };
     context.fillStyle = 'green';
     for (var id in players) {
         var player = players[id];
@@ -218,3 +230,27 @@ socket.on('state', function(players) {
         context.fill();
     }
 });
+
+
+socket.on('movement', function(data) {
+
+});
+
+
+setInterval(function() {
+    socket.emit('movement', movement);
+}, 1000 / 60);
+
+//context.clearRect(0, 0, 800, 600);
+
+socket.on('state', function(players) {
+	//context.clearRect(0, 0, 1200, 600);
+    //drawGameBoard();
+
+
+});
+
+
+setInterval(function() {
+    socket.emit('state', players);
+}, 1000 / 60);
