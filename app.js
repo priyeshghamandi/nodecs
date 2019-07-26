@@ -44,19 +44,37 @@ var Wall = function (id) {
     }
     return self;
 }
-/*
-var playerImg = new Image();
-playerImg.src = '/client/img/player.png';
 
-var playerImgInj = new Image();
-playerImgInj.src = '/client/img/player_inj.png';*/
+var walls = {}
+
+walls.wall1.x = 200;
+walls.wall1.y = 200;
+
+walls.wall2.x = 600;
+walls.wall2.y = 200;
+
+walls.wall3.x = 200;
+walls.wall3.y = 500;
+
+walls.wall4.x = 600;
+walls.wall4.y = 500;
+
+walls.wall5.x = 400;
+walls.wall5.y = 350;
 
 
-var isCollisionRight = function(self){
-    console.log("X ",self.x)
-    console.log("Y ",self.y)
-    console.log(self.x > 460 && (self.y > 170 || self.y < 270));
-    return (self.x > 460 && (self.y > 170 && self.y < 270));
+
+var isCollisionRight = function(p){
+    var size = 100;
+    var playerSize = 50;
+
+    var isCollision = false;
+    for(var wall in walls){
+        if((p.x > (wall.x-(playerSize-10)) && p.y > wall.y && p.y < (wall.y + size))){
+
+        }
+    }
+
 }
 
 var Player = function(id){
@@ -69,11 +87,12 @@ var Player = function(id){
     self.pressingDown = false;
     self.pressingAttack = false;
     self.mouseAngle = 0;
-    self.maxSpd = 10;
+    self.maxSpd = 1;
     self.hp = 10;
     self.hpMax = 10;
     self.score = 0;
     self.img = '/client/img/player.png';
+
 
 
     var super_update = self.update;

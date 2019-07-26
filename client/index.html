@@ -12,7 +12,7 @@
 </div>
 
 <div id="gameDiv" style="display:none;">
-    <canvas id="ctx" width="900" height="900" style="border:none;background-image: url(/client/img/snow_map.jpg);"></canvas>
+    <canvas id="ctx" width="900" height="900" style="border:none;background-image: url(/client/img/snow_map.jpg);cursor: crosshair;"></canvas>
 
 
 
@@ -84,11 +84,17 @@
     Img.playerInj = new Image();
     Img.playerInj.src = '/client/img/player_inj.png';
 
+    Img.playerExp = new Image();
+    Img.playerExp.src = '/client/img/explode.png';
+
     Img.bullet = new Image();
     Img.bullet.src = '/client/img/bullet.png';
 
     Img.map = new Image();
     Img.map.src = '/client/img/snow_map.png';
+
+    Img.wall = new Image();
+    Img.wall.src = '/client/img/wall.png';
 
     var ctx = document.getElementById("ctx").getContext("2d");
     ctx.font = '30px Arial';
@@ -103,6 +109,7 @@
         self.hpMax = initPack.hpMax;
         self.score = initPack.score;
         self.img =  initPack.img;
+        self.roomID = initPack.roomID;
 
         var img = new Image();
         img.src = self.img;
@@ -113,12 +120,21 @@
             if(self.hp > 0) {
                 var hpWidth = 30 * self.hp / self.hpMax;
                 ctx.fillRect(self.x - hpWidth / 2, self.y - 40, hpWidth, 4);
+
                 //ctx.fillText(self.number,self.x,self.y);
                 //ctx.fillText(self.score,self.x,self.y-60);
+
                 ctx.drawImage(img, self.x - 20, self.y - 30, 50, 50);
+
                 if (self.hp < 10) {
+                  //  ctx.fillRect(self.x - 20, self.y - 30, 50, 50);
                     ctx.drawImage(Img.playerInj, self.x - 20, self.y - 30, 50, 50);
                 }
+            }
+            if (self.hp == 0) {
+                setTimeout(function(){
+                    ctx.drawImage(Img.playerExp, self.x - 20, self.y - 30, 50, 50);
+                }, 3000);
             }
 
         }
@@ -153,7 +169,8 @@
         self.y = initPack.y;
 
         self.draw = function(){
-            ctx.fillRect(self.x-5,self.y-5,10,10);
+            //ctx.fillRect(self.x-5,self.y-5,10,10);
+            ctx.drawImage(Img.bullet, self.x-5,self.y-5,10,10);
         }
 
         Bullet.list[self.id] = self;
@@ -188,6 +205,8 @@
                     p.score = pack.score;
                 if(pack.img !== undefined)
                     p.img = pack.img;
+                if(pack.roomID !== undefined)
+                    p.roomID = pack.roomID;
             }
         }
         for(var i = 0 ; i < data.bullet.length; i++){
@@ -219,14 +238,21 @@
 
         ctx.clearRect(0,0,900,900);
 
-        ctx.fillRect(500, 200, 100, 100);
+        //ctx.fillRect(500, 200, 100, 100);
+        ctx.drawImage(Img.wall, 200, 200, 100, 100);
+        ctx.drawImage(Img.wall, 600, 200, 100, 100);
 
+
+        ctx.drawImage(Img.wall, 200, 500, 100, 100);
+        ctx.drawImage(Img.wall, 600, 500, 100, 100);
+
+        ctx.drawImage(Img.wall, 400, 350, 100, 100);
 
         for(var i in Player.list)
             Player.list[i].draw();
         for(var i in Bullet.list)
             Bullet.list[i].draw();
-    },40);
+    },140);
 
 
     document.onkeydown = function(event){
@@ -238,6 +264,8 @@
             socket.emit('keyPress',{inputId:'left',state:true});
         else if(event.keyCode === 87) // w
             socket.emit('keyPress',{inputId:'up',state:true});
+        else if(event.keyCode === 32) // w
+            socket.emit('keyPress',{inputId:'attack',state:true});
 
     }
     document.onkeyup = function(event){
@@ -249,6 +277,8 @@
             socket.emit('keyPress',{inputId:'left',state:false});
         else if(event.keyCode === 87) // w
             socket.emit('keyPress',{inputId:'up',state:false});
+        else if(event.keyCode === 32) // w
+            socket.emit('keyPress',{inputId:'attack',state:false});
     }
 
     document.onmousedown = function(event){
