@@ -45,22 +45,29 @@ var Wall = function (id) {
     return self;
 }
 
-var walls = {}
+let walls = [
+    {
+        x: 200,
+        y: 200
+    },
+    {
+        x: 600,
+        y: 200
+    },
+    {
+        x: 200,
+        y: 500
+    },
+    {
+        x: 600,
+        y: 500
+    },
+    {
+        x: 400,
+        y: 350
+    }
 
-walls.wall1.x = 200;
-walls.wall1.y = 200;
-
-walls.wall2.x = 600;
-walls.wall2.y = 200;
-
-walls.wall3.x = 200;
-walls.wall3.y = 500;
-
-walls.wall4.x = 600;
-walls.wall4.y = 500;
-
-walls.wall5.x = 400;
-walls.wall5.y = 350;
+];
 
 
 
