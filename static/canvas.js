@@ -5,18 +5,18 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 window.onload = function() {
-	setGameStartCounterText = function(counter) {
-			drawGameBoard(counter);
-		}
+	//setGameStartCounterText = function(counter) {
+			drawGameBoard();
+		//}
 };
 
-let drawGameBoard = function(counter) {
+let drawGameBoard = function() {
 	var snowImage = new Image();
   snowImage.onload = function() {
        context.drawImage(snowImage, SNOW_IMAGE_X, SNOW_IMAGE_Y, SNOW_IMAGE_WIDTH, SNOW_IMAGE_HEIGHT);
-       context.font = "40pt Calibri";
-			context.fillStyle = "red";
-			context.fillText(getGameStartText(counter), 460, 100);
+       //context.font = "40pt Calibri";
+			//context.fillStyle = "red";
+			//context.fillText(getGameStartText(counter), 460, 100);
 			drawWalls();
 
 			let team1 = new Team1();
@@ -150,5 +150,71 @@ function drawPlayer(x, y, teamId, playerId, isInjured) {
 	 if (teamId == 2 && isInjured) {
 		 playerImageObj.src = "/static/images/team2InjuredPlayer.png";
 	 }
-
 }
+
+
+// Socket programming
+
+var socket = io();
+socket.on('message', function(data) {
+    console.log(data);
+});
+
+var movement = {
+    up: false,
+    down: false,
+    left: false,
+    right: false
+}
+document.addEventListener('keydown', function(event) {
+    switch (event.keyCode) {
+        case 65: // A
+            movement.left = true;
+            break;
+        case 87: // W
+            movement.up = true;
+            break;
+        case 68: // D
+            movement.right = true;
+            break;
+        case 83: // S
+            movement.down = true;
+            break;
+    }
+});
+document.addEventListener('keyup', function(event) {
+    switch (event.keyCode) {
+        case 65: // A
+            movement.left = false;
+            break;
+        case 87: // W
+            movement.up = false;
+            break;
+        case 68: // D
+            movement.right = false;
+            break;
+        case 83: // S
+            movement.down = false;
+            break;
+    }
+});
+
+
+socket.emit('new player');
+setInterval(function() {
+    socket.emit('movement', movement);
+}, 1000 / 60);
+
+//context.clearRect(0, 0, 800, 600);
+
+socket.on('state', function(players) {
+		context.clearRect(0, 0, 1200, 600);
+
+    context.fillStyle = 'green';
+    for (var id in players) {
+        var player = players[id];
+        context.beginPath();
+        context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+        context.fill();
+    }
+});
