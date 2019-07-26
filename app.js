@@ -75,6 +75,7 @@ var isCollisionRight = function(p){
         }
     }
 
+    return isCollision;
 }
 
 var Player = function(id){
