@@ -12,7 +12,7 @@
 </div>
 
 <div id="gameDiv" style="display:none;">
-    <canvas id="ctx" width="500" height="500" style="border:1px solid #000000;"></canvas>
+    <canvas id="ctx" width="900" height="900" style="border:none;background-image: url(/client/img/snow_map.jpg);"></canvas>
 
 
 
@@ -88,7 +88,7 @@
     Img.bullet.src = '/client/img/bullet.png';
 
     Img.map = new Image();
-    Img.map.src = '/client/img/map.png';
+    Img.map.src = '/client/img/snow_map.png';
 
     var ctx = document.getElementById("ctx").getContext("2d");
     ctx.font = '30px Arial';
@@ -212,8 +212,16 @@
         }
     });
 
+
+
+
     setInterval(function(){
-        ctx.clearRect(0,0,500,500);
+
+        ctx.clearRect(0,0,900,900);
+
+        ctx.fillRect(500, 200, 100, 100);
+
+
         for(var i in Player.list)
             Player.list[i].draw();
         for(var i in Bullet.list)

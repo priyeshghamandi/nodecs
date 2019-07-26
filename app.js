@@ -51,6 +51,14 @@ playerImg.src = '/client/img/player.png';
 var playerImgInj = new Image();
 playerImgInj.src = '/client/img/player_inj.png';*/
 
+
+var isCollisionRight = function(self){
+    console.log("X ",self.x)
+    console.log("Y ",self.y)
+    console.log(self.x > 460 && (self.y > 170 || self.y < 270));
+    return (self.x > 460 && (self.y > 170 && self.y < 270));
+}
+
 var Player = function(id){
     var self = Entity();
     self.id = id;
@@ -67,12 +75,9 @@ var Player = function(id){
     self.score = 0;
     self.img = '/client/img/player.png';
 
-    //self.imgInj = '/client/img/player_inj.png';
 
     var super_update = self.update;
     self.update = function(){
-        console.log("updating player "+self.hp);
-        console.log("updating player imng"+self.img);
         self.updateSpd();
         super_update();
 
@@ -87,19 +92,35 @@ var Player = function(id){
     }
 
     self.updateSpd = function(){
-        if(self.pressingRight)
-            self.spdX = self.maxSpd;
-        else if(self.pressingLeft)
-            self.spdX = -self.maxSpd;
-        else
+        if(self.pressingRight){
+            if(isCollisionRight(self)){
+                self.spdX = 0;
+            }else{
+                self.spdX = self.maxSpd;
+            }
+        }
+        else if(self.pressingLeft) {
+            //if (!isCollision(self)) {
+                self.spdX = -self.maxSpd;
+            //}
+        }
+        else {
             self.spdX = 0;
+        }
 
-        if(self.pressingUp)
-            self.spdY = -self.maxSpd;
-        else if(self.pressingDown)
-            self.spdY = self.maxSpd;
-        else
+        if(self.pressingUp) {
+           // if (!isCollision(self)) {
+                self.spdY = -self.maxSpd;
+           // }
+        }
+        else if(self.pressingDown) {
+            //if (!isCollision(self)) {
+                self.spdY = self.maxSpd;
+            //}
+        }
+        else {
             self.spdY = 0;
+        }
     }
 
     self.getInitPack = function(){
@@ -175,6 +196,8 @@ Player.update = function(){
     }
     return pack;
 }
+
+
 
 
 var Bullet = function(parent,angle){
@@ -291,6 +314,9 @@ io.sockets.on('connection', function(socket){
     SOCKET_LIST[socket.id] = socket;
 
     var wall = Wall(socket.id);
+
+  //  Player.onConnect(socket);
+    //socket.emit('signInResponse',{success:true});
 
     socket.on('signIn',function(data){
         isValidPassword(data,function(res){
