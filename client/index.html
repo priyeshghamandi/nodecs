@@ -11,15 +11,32 @@
     <button id="signDiv-signUp">Sign Up</button>
 </div>
 
-<div id="gameDiv" style="display:none;">
-    <canvas id="ctx" width="900" height="900" style="border:none;background-image: url(/client/img/snow_map.jpg);cursor: crosshair;"></canvas>
+<table id="gameDiv" style="display:none; border-collapse: collapse" border="1">
+    <tr>
+        <td>
+            <canvas id="ctx" width="900" height="900" style="border:none;background-image: url(/client/img/snow_map.jpg);cursor: crosshair;"></canvas>
+        </td>
+        <td style="vertical-align: top;">
+            <h2>CHAT</h2>
+            <form id="chat-form">
+                <input id="chat-input" type="text" style="width:500px"></input>
+            </form>
+            <div id="chat-text"></div>
+        </td>
+        <td style="vertical-align: top;">
+            <h2>SCOREBOARD</h2>
+           <div id="score-board">
+
+           </div>
+        </td>
+    </tr>
+</table>
+<div>
 
 
 
-    <form id="chat-form">
-        <input id="chat-input" type="text" style="width:500px"></input>
-    </form>
-    <div id="chat-text"></div>
+
+
 </div>
 
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -75,6 +92,20 @@
         chatInput.value = '';
     }
 
+    var scoreBoard = document.getElementById('score-board');
+    socket.on('scoreUpdated',function(players){
+        scoreBoard.innerHTML = '';
+        for (var key in players) {
+            if (players.hasOwnProperty(key)) {
+                var player = players[key];
+                console.log(player.hp);
+                scoreBoard.innerHTML += '<div> Name:  ' + player.number + '<br>HP: '+ player.hp +'<br>Score: '+player.score+'<hr></div>';
+
+            }
+        }
+
+
+    });
     //game
 
     var Img = {};

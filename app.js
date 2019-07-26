@@ -16,8 +16,8 @@ var SOCKET_LIST = {};
 
 var Entity = function(){
     var self = {
-        x:250,
-        y:250,
+        x:100,
+        y:100,
         spdX:0,
         spdY:0,
         id:"",
@@ -70,7 +70,90 @@ let walls = [
 ];
 
 
+var WALL_SIZE = 100;
+var PLAYER_SIZE = 15;
+var isCollisionRight = function(self){
+    var isCollision = false;
+    for(var i in walls) {
+        var wall = walls[i];
+        console.log(" Index =========== "+i);
+        console.log(" wall x =========== "+wall.x);
+        console.log(" wall y =========== "+wall.y);
+        if((self.x > (wall.x - PLAYER_SIZE - 10)) &&
+            self.y > (wall.y - PLAYER_SIZE) &&
+            self.y < (wall.y + PLAYER_SIZE + WALL_SIZE) &&
+            self.x < (wall.x + PLAYER_SIZE + WALL_SIZE)
+        ){
+            isCollision = true;
+        }
+    }
+    console.log("X ",self.x)
+    console.log("Y ",self.y)
+    console.log("Right =========== "+isCollision);
+    return isCollision;
+}
 
+var isCollisionLeft = function(self){
+    var isCollision = false;
+    for(var i in walls) {
+        var wall = walls[i];
+        console.log(" Index =========== "+i);
+        console.log(" wall x =========== "+wall.x);
+        console.log(" wall y =========== "+wall.y);
+        if((self.x > (wall.x + PLAYER_SIZE + 10)) &&
+            self.y > (wall.y - PLAYER_SIZE) &&
+            self.y < (wall.y + PLAYER_SIZE + WALL_SIZE) &&
+            self.x < (wall.x + PLAYER_SIZE + WALL_SIZE)
+        ){
+            isCollision = true;
+        }
+    }
+    console.log("X ",self.x)
+    console.log("Y ",self.y)
+    console.log("Left =========== "+isCollision);
+    return isCollision;
+}
+
+var isCollisionUp = function(self){
+    var isCollision = false;
+    for(var i in walls) {
+        var wall = walls[i];
+        if((self.y > (wall.y + PLAYER_SIZE + 10)) &&
+            self.x > (wall.x - PLAYER_SIZE) &&
+            self.x < (wall.x + PLAYER_SIZE + WALL_SIZE) &&
+            self.y < (wall.y + PLAYER_SIZE + WALL_SIZE)
+        ){
+            isCollision = true;
+        }
+    }
+    console.log("X ",self.x)
+    console.log("Y ",self.y)
+    console.log("Up =========== "+isCollision);
+    return isCollision;
+}
+
+var isCollisionDown = function(self){
+    var isCollision = false;
+    for(var i in walls) {
+        var wall = walls[i];
+        if((self.y > (wall.y - PLAYER_SIZE - 10)) &&
+            self.x > (wall.x - PLAYER_SIZE) &&
+            self.x < (wall.x + PLAYER_SIZE + WALL_SIZE) &&
+            (self.y < (wall.y - PLAYER_SIZE - 10) + WALL_SIZE)
+        ){
+            isCollision = true;
+        }
+    }
+    console.log("X ",self.x)
+    console.log("Y ",self.y)
+    console.log("Down =========== "+isCollision);
+    return isCollision;
+}
+
+
+
+
+/*
 var isCollisionRight = function(p){
     var size = 100;
     var playerSize = 50;
@@ -83,7 +166,7 @@ var isCollisionRight = function(p){
     }
 
     return isCollision;
-}
+}*/
 
 var Player = function(id){
     var self = Entity();
@@ -95,7 +178,7 @@ var Player = function(id){
     self.pressingDown = false;
     self.pressingAttack = false;
     self.mouseAngle = 0;
-    self.maxSpd = 1;
+    self.maxSpd = 10;
     self.hp = 10;
     self.hpMax = 10;
     self.score = 0;
@@ -122,28 +205,40 @@ var Player = function(id){
         if(self.pressingRight){
             if(isCollisionRight(self)){
                 self.spdX = 0;
+                self.x -= 20;
             }else{
                 self.spdX = self.maxSpd;
             }
         }
         else if(self.pressingLeft) {
-            //if (!isCollision(self)) {
+            if (isCollisionLeft(self)) {
+                self.spdX = 0;
+                self.x += 20;
+            }else{
                 self.spdX = -self.maxSpd;
-            //}
+            }
         }
         else {
             self.spdX = 0;
         }
 
         if(self.pressingUp) {
-           // if (!isCollision(self)) {
+            if (isCollisionUp(self)) {
+                self.spdY = 0;
+                self.y += 20;
+            }else{
                 self.spdY = -self.maxSpd;
-           // }
+            }
+
         }
+
         else if(self.pressingDown) {
-            //if (!isCollision(self)) {
+            if (isCollisionDown(self)) {
+                self.spdY = 0;
+                self.y -= 20;
+            }else{
                 self.spdY = self.maxSpd;
-            //}
+            }
         }
         else {
             self.spdY = 0;
@@ -233,7 +328,7 @@ var Bullet = function(parent,angle){
     self.spdX = Math.cos(angle/180*Math.PI) * 10;
     self.spdY = Math.sin(angle/180*Math.PI) * 10;
     self.parent = parent;
-    self.timer = 0;
+    self.timer = 10;
     self.toRemove = false;
     var super_update = self.update;
     self.update = function(){
@@ -245,21 +340,19 @@ var Bullet = function(parent,angle){
             var p = Player.list[i];
             if(self.getDistance(p) < 32 && self.parent !== p.id){
                 p.hp -= 1;
-                console.log(" changing HP ",p.hp);
-
                 p.img = '/client/img/player_inj.png';
-                console.log(" changing image ",p.img);
+
+                for(var i in SOCKET_LIST){
+                    SOCKET_LIST[i].emit('scoreUpdated',Player.list);
+                }
+
+
 
                 if(p.hp <= 0){
                     var shooter = Player.list[self.parent];
-                    if(shooter)
+                    if(shooter) {
                         shooter.score += 1;
-
-                    //p.hp = p.hpMax;
-                    //p.x = Math.random() * 500;
-                    //p.y = Math.random() * 500;
-
-                   // p.remove();
+                    }
                 }
                 self.toRemove = true;
             }
